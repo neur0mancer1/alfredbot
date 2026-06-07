@@ -1,0 +1,14 @@
+.venv/
+__pycache__/
+*.pyc
+data/
+judging/clips/
+judging/promo_codes_*.txt
+evidence/
+*.db
+.env
+*.swp
+*.swo
+*~
+judging/*
+!judging/sample_tesco.eml

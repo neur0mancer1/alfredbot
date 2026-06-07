@@ -1,0 +1,11 @@
+{
+  "$schema": "https://railway.com/railway.schema.json",
+  "build": {
+    "builder": "RAILPACK"
+  },
+  "deploy": {
+    "startCommand": "PYTHONPATH=src python -m alfred.bot.telegram_bot",
+    "restartPolicyType": "ALWAYS",
+    "overlapSeconds": 0
+  }
+}

@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Alfred — shared expenses that remember</title>
+<meta name="description" content="Manage shared expenses inside the group chat: forward receipts, split every item, automate reminders, track spending, and let Alfred remember." />
+<style>
+  :root{--ink:#111114;--muted:#686872;--line:#e9e8ed;--paper:#fff;--bg:#f7f6fa;--purple:#7351d6;--green:#087f5b;--red:#b42318}
+  *{box-sizing:border-box} html{scroll-behavior:smooth} body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Inter,sans-serif;-webkit-font-smoothing:antialiased}
+  a{color:inherit}.wrap{width:min(1040px,calc(100% - 40px));margin:auto}.nav{height:68px;display:flex;align-items:center;justify-content:space-between}.brand{font-size:20px;font-weight:750;text-decoration:none}.nav .mini{font-size:14px;color:var(--muted)}
+  .button{display:inline-block;background:var(--ink);color:#fff;text-decoration:none;font-weight:700;padding:14px 22px;border-radius:999px}.button.secondary{background:var(--paper);color:var(--ink);border:1px solid var(--line)}
+  .hero{padding:76px 0 92px;text-align:center}.eyebrow{font-size:14px;font-weight:750;color:var(--purple);text-transform:uppercase;letter-spacing:.08em}.hero h1{font-size:clamp(42px,7vw,78px);line-height:.98;letter-spacing:-.055em;max-width:900px;margin:18px auto}.sub{font-size:clamp(18px,2.2vw,23px);line-height:1.5;color:var(--muted);max-width:670px;margin:22px auto 0}.actions{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin-top:32px}
+  .proof{display:flex;justify-content:center;gap:24px;flex-wrap:wrap;margin-top:32px;color:var(--muted);font-size:14px}.proof b{color:var(--ink)}
+  section{padding:84px 0}.title{text-align:center;max-width:700px;margin:0 auto 38px}.title h2{font-size:clamp(30px,4.8vw,50px);line-height:1.05;letter-spacing:-.04em;margin:0}.title p{color:var(--muted);font-size:17px;line-height:1.5;margin:15px 0 0}
+  .flow{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}.card,.comparison,.chat{background:var(--paper);border:1px solid var(--line);border-radius:22px}.card{padding:26px}.step{font-size:13px;font-weight:750;color:var(--purple);text-transform:uppercase;letter-spacing:.08em}.card h3{font-size:21px;margin:12px 0 8px}.card p{color:var(--muted);line-height:1.55;margin:0}
+  .chat{max-width:660px;margin:48px auto 0;background:#242029;padding:18px;box-shadow:0 30px 70px -42px #000}.bubble{width:88%;background:#332d39;color:#fff;padding:14px 16px;border-radius:16px;margin:9px 0;line-height:1.4}.bubble.me{margin-left:auto;background:var(--purple);width:max-content}.bubble strong{display:block;margin-bottom:5px}.bubble small{display:block;color:#c9c2d0;margin-top:8px}.choices{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:10px}.choice{background:#45404a;padding:9px;border-radius:9px;text-align:center;font-size:14px}
+  .feature{display:grid;grid-template-columns:.85fr 1.15fr;gap:32px;align-items:center;margin-top:54px}.feature.reverse{grid-template-columns:1.15fr .85fr}.feature .chat{margin:0}.feature-copy h3{font-size:clamp(28px,4vw,43px);letter-spacing:-.04em;line-height:1.05;margin:0 0 15px}.feature-copy p{color:var(--muted);font-size:17px;line-height:1.6;margin:0}.tag{display:inline-block;background:#eeeaf9;color:var(--purple);font-weight:750;font-size:12px;text-transform:uppercase;letter-spacing:.08em;border-radius:99px;padding:7px 10px;margin-bottom:16px}.remembered{color:#bdaaf7;font-weight:700}.nudge.one{width:78%}.nudge.two{width:88%}.nudge.three{width:100%;border:1px solid #7351d6}.roadmap{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}.roadmap .card{padding:22px}.roadmap h3{margin:10px 0 7px}.soon{font-size:11px;font-weight:750;color:var(--purple);text-transform:uppercase;letter-spacing:.08em}
+  .setup{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}.setup .card{padding:22px}.setup .number{display:grid;place-items:center;width:32px;height:32px;border-radius:50%;background:#eeeaf9;color:var(--purple);font-weight:800}.setup h3{margin:18px 0 7px}.setup-actions{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin-top:28px}
+  .comparison{overflow:hidden}.row{display:grid;grid-template-columns:1.5fr 1fr 1fr;padding:18px 24px;border-top:1px solid var(--line);gap:14px}.row:first-child{border-top:0;font-weight:750;background:#faf9fc}.bad{color:var(--red)}.good{color:var(--green);font-weight:650}
+  .race{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:18px}.lane{background:var(--paper);border:1px solid var(--line);border-radius:20px;padding:24px}.lane h3{margin:0 0 16px}.lane ol{margin:0;padding-left:20px;color:var(--muted);line-height:1.8}.lane.alfred{border-color:#b8a8ed;box-shadow:inset 0 0 0 1px #b8a8ed}.result{margin-top:18px;background:#eeeaf9;border-radius:18px;padding:20px;text-align:center;line-height:1.5}.result strong{display:block;font-size:20px}.result span{color:var(--muted)}
+  .cta-block{background:var(--ink);color:#fff;text-align:center;border-radius:28px;padding:54px 24px}.cta-block h2{font-size:clamp(30px,5vw,52px);letter-spacing:-.04em;margin:0}.cta-block p{color:#b8b7bf;max-width:540px;margin:14px auto 25px;font-size:18px;line-height:1.5}.cta-block .button{background:#fff;color:var(--ink)}
+  footer{text-align:center;color:var(--muted);font-size:14px;padding:34px 0 44px}
+  @media(max-width:850px){.roadmap,.setup{grid-template-columns:1fr 1fr}} @media(max-width:720px){.hero{padding-top:48px}.flow,.race,.feature,.feature.reverse{grid-template-columns:1fr}.feature.reverse .feature-copy{order:-1}.roadmap,.setup{grid-template-columns:1fr}.row{grid-template-columns:1.25fr 1fr 1fr;padding:15px 12px;font-size:13px}.nav .mini{display:none}section{padding:62px 0}.proof{gap:10px 18px}}
+</style>
+</head>
+<body>
+<nav class="wrap nav"><a class="brand" href="#">🎩 Alfred</a><span class="mini">Shared expenses, without the spreadsheet</span><a class="button" href="https://t.me/HeyA1fredBot">Try Alfred</a></nav>
+
+<main>
+  <header class="wrap hero">
+    <div class="eyebrow">Your shared-expense assistant</div>
+    <h1>Forward the receipt.<br>Alfred handles the rest.</h1>
+    <p class="sub">Split every item, calculate the exact settlement, chase late payments, and remember how your group usually shares things.</p>
+    <div class="actions"><a class="button" href="https://t.me/HeyA1fredBot">Try Alfred now</a><a class="button secondary" href="#comparison">See the comparison</a></div>
+    <div class="proof"><span><b>Penny-perfect</b> settlements</span><span><b>Automatic</b> reminders</span><span><b>Cross-order</b> memory</span></div>
+  </header>
+
+  <section>
+    <div class="wrap">
+      <div class="title"><h2>One receipt. Three chat messages.</h2><p>No separate app, spreadsheet, or shared login. Forward it. Split it. Settle it.</p></div>
+      <div class="flow">
+        <article class="card"><div class="step">01 · Forward</div><h3>Send the receipt in-chat</h3><p>Alfred reads item names, prices, fees, discounts, and the exact paid total from a supported receipt.</p></article>
+        <article class="card"><div class="step">02 · Tap</div><h3>Split without leaving</h3><p>Everyone claims personal items or shared items directly inside the group conversation.</p></article>
+        <article class="card"><div class="step">03 · Settle</div><h3>Pay the exact amount</h3><p>Alfred calculates who owes whom, follows up on unpaid orders, and confirms when the payer receives it.</p></article>
+      </div>
+      <div class="chat" aria-label="Example Alfred conversation">
+        <div class="bubble me">Receipt.eml</div>
+        <div class="bubble"><strong>🎩 Your order · £18.79 · paid by Bruce Wayne</strong>Tap an item, then pick who shared it.<div class="choices"><span class="choice">▫️ Salmon fillets</span><span class="choice">✅ Orange juice</span><span class="choice">✅ Greek yoghurt</span><span class="choice">✅ Done & settle</span></div></div>
+        <div class="bubble"><strong>🎩 The accounts, sir</strong>Harvey Dent → Bruce Wayne: £5.80<small>Status: ⏳ awaiting payment</small></div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <div class="title"><h2>Alfred does not forget.</h2><p>It remembers across orders and follows through until the money is settled. <b>Persistent memory powered by Mubit.</b></p></div>
+      <div class="feature">
+        <div class="feature-copy"><span class="tag">Cross-order memory</span><h3>The next split is already half done.</h3><p>Once your group confirms who usually shares an item, Alfred remembers it — its persistent, cross-order memory is <b>powered by Mubit</b>. When that item appears on a later order, the familiar split is pre-selected for review.</p></div>
+        <div class="chat">
+          <div class="bubble me">Next week's receipt.eml</div>
+          <div class="bubble"><strong>🎩 I remembered your usual splits</strong><span class="remembered">🔮 Greek yoghurt → Commissioner Gordon</span><br><span class="remembered">🔮 Orange juice → Bruce Wayne & Harvey Dent</span><br><span class="remembered">🔮 Salmon fillets → Bruce Wayne</span><small>Review the suggestions, then settle.</small></div>
+        </div>
+      </div>
+      <div class="feature reverse">
+        <div class="chat">
+          <div class="bubble nudge one"><strong>🎩 A gentle reminder</strong>Harvey Dent → Bruce Wayne: £5.80<small>Awaiting payment for 1 hour</small></div>
+          <div class="bubble nudge two"><strong>🎩 A firmer reminder</strong>This order is still awaiting payment after two hours.</div>
+          <div class="bubble nudge three"><strong>🎩 Payment is now four hours overdue</strong>Please settle the account promptly.<div class="choices"><span class="choice">Pay Bruce £5.80</span><span class="choice">Confirm received</span></div></div>
+        </div>
+        <div class="feature-copy"><span class="tag">Automatic follow-through</span><h3>Stop being the person who has to chase.</h3><p>Alfred sends progressively firmer reminders after one, two, and four hours. The payer confirms when the money lands, and the account is closed.</p></div>
+      </div>
+      <div class="feature">
+        <div class="feature-copy"><span class="tag">Expense history & Wrapped</span><h3>Know where the group's money went.</h3><p>Every settled order contributes to a running expense history. Ask Alfred for a weekly or monthly Wrapped to see total spend, the biggest order, top spender, payment speed, awards, and remembered habits.</p></div>
+        <div class="chat">
+          <div class="bubble me">/monthlywrap</div>
+          <div class="bubble"><strong>🎩 Alfred Wrapped — This month</strong>🧾 8 orders · £384.20 total<br>🏆 Biggest order: £75.45<br>💸 Top spender: Bruce Wayne (£172.10)<br>⏱️ Avg time to confirm payment: 42m<br><br><strong>Awards 🏅</strong>☕ Commissioner Gordon — Caffeine Baron<br>🥑 Harvey Dent — Greengrocer of the Year<br><br><span class="remembered">Your signature splits: orange juice → Bruce & Harvey</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <div class="title"><span class="tag">Get started</span><h2>Invite Alfred to the group.</h2><p>Set it up once. From then on, receipts, settlements, reminders, and spending summaries all stay in the same chat.</p></div>
+      <div class="setup">
+        <article class="card"><span class="number">1</span><h3>Create the group</h3><p>Open a group chat for everyone who shares expenses.</p></article>
+        <article class="card"><span class="number">2</span><h3>Add Alfred</h3><p>Add <b>@HeyA1fredBot</b>, then each person runs <b>/join</b>.</p></article>
+        <article class="card"><span class="number">3</span><h3>Activate access</h3><p>Buy three months for <b>£0.99</b>, then activate the code provided.</p></article>
+        <article class="card"><span class="number">4</span><h3>Forward a receipt</h3><p>Send the supported receipt and tap who shared each item.</p></article>
+      </div>
+      <div class="setup-actions">
+        <a class="button" href="https://buy.stripe.com/aFa6oHamC1SO7Ds2h21oI00">Get access for £0.99</a>
+        <a class="button secondary" href="https://t.me/HeyA1fredBot">Open Alfred</a>
+      </div>
+    </div>
+  </section>
+
+  <section id="comparison">
+    <div class="wrap">
+      <div class="title"><h2>Alfred vs Splitwise</h2><p>A fair head-to-head uses the same real itemised order and ends only when every item has been allocated and the final amount is ready to pay.</p></div>
+      <div class="comparison">
+        <div class="row"><span></span><span>Splitwise free</span><span>Alfred</span></div>
+        <div class="row"><span>Import an itemised receipt</span><span class="bad">No</span><span class="good">Forward receipt</span></div>
+        <div class="row"><span>Split individual items</span><span class="bad">Manual workaround</span><span class="good">Built in</span></div>
+        <div class="row"><span>Remember usual item splits</span><span class="bad">No</span><span class="good">Yes (Mubit)</span></div>
+        <div class="row"><span>Chase unpaid settlements</span><span class="bad">Manual</span><span class="good">Automatic</span></div>
+        <div class="row"><span>Track and summarise group spending</span><span class="bad">Across another app</span><span class="good">Ask in the chat</span></div>
+      </div>
+      <div class="race">
+        <article class="lane"><h3>External-app route</h3><ol><li>Leave the group chat</li><li>Open a separate expense app</li><li>Re-enter or work around every item</li><li>Assign each item manually</li><li>Return to the chat to chase people</li></ol></article>
+        <article class="lane alfred"><h3>Alfred route</h3><ol><li>Forward the receipt in the chat</li><li>Tap who shared each item</li><li>Press Done & settle</li><li>Let Alfred follow up and keep the history</li></ol></article>
+      </div>
+      <div class="result"><strong>Recorded result: Splitwise free was blocked at 33.24 seconds.</strong><span>It hit the daily expense limit before the itemised order could be completed. Alfred completes the item-level workflow without leaving the chat.</span></div>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <div class="title"><span class="tag">Coming soon</span><h2>One Alfred for every shared expense.</h2><p>The same receipt-to-settlement workflow is expanding beyond groceries and beyond today's chat platform.</p></div>
+      <div class="roadmap">
+        <article class="card"><span class="soon">Coming soon</span><h3>WhatsApp</h3><p>Use Alfred in the group chats where households already coordinate.</p></article>
+        <article class="card"><span class="soon">Coming soon</span><h3>Deliveroo</h3><p>Split dishes, fees, and discounts from shared food-delivery orders.</p></article>
+        <article class="card"><span class="soon">Coming soon</span><h3>Uber Eats</h3><p>Turn itemised delivery receipts into exact repayments.</p></article>
+        <article class="card"><span class="soon">Coming soon</span><h3>Business trips</h3><p>Track receipts and shared business expenses while you are away.</p></article>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap cta-block"><h2>Keep shared expenses in the chat.</h2><p>Three months of early access for £0.99. No extra expense app required.</p><div class="actions"><a class="button" href="https://buy.stripe.com/aFa6oHamC1SO7Ds2h21oI00">Get access for £0.99</a><a class="button secondary" href="https://t.me/HeyA1fredBot">Open Alfred</a></div></div>
+  </section>
+</main>
+<footer>Alfred · built for Pop the Bubble · <a href="https://t.me/HeyA1fredBot">@HeyA1fredBot</a></footer>
+</body>
+</html>
